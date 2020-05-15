@@ -27,7 +27,28 @@ RUN set -ex && \
         zlib-devel \
         && \
     rm -rf /var/cache/yum
-
+	
+RUN set -ex && \
+    yum install  gmp  gmp-devel  mpfr  mpfr-devel  libmpc  libmpc-devel -y && \
+    curl -fSsL -o /tmp/gcc-7.5.0.tar.gz https://bigsearcher.com/mirrors/gcc/releases/gcc-7.5.0/gcc-7.5.0.tar.gz && \
+	tar -C /tmp -zxvf /tmp/gcc-7.5.0.tar.gz && \
+	mkdir -p /tmp/gcc-7.5.0/build && \
+	cd /tmp/gcc-7.5.0/build && \
+	../configure --prefix=/usr/local/gcc --enable-checking=release --enable-languages=c,c++,fortran,go --disable-multilib && \
+	make -j 4 &&  \
+	make install && \
+	find / -name "libstdc++.so*" && \
+	gcc --version && \
+	mv /usr/bin/gcc /usr/bin/gcc_old && \
+	ln -s /usr/local/gcc/bin/gcc /usr/bin/gcc && \
+	mv /usr/bin/g++ /usr/bin/g++_old && \
+	ln -s /usr/local/gcc/bin/g++ /usr/bin/g++ && \
+	gcc --verson && \
+	g++ --version && \
+	rm -fr /tmp/gcc-7.5.0 && \
+	rm -f /tmp/gcc-7.5.0.tar.gz && \
+	rm -rf /var/cache/yum
+	
 RUN set -ex && \    
 	curl -fSsL -O https://bootstrap.pypa.io/get-pip.py && \
     python get-pip.py && \
