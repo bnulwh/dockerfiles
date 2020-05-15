@@ -28,17 +28,12 @@ RUN set -ex && \
         && \
     rm -rf /var/cache/yum
 
-RUN set -ex && \
-    yum makecache && \
-	yum install -y python36 python3-devel python3-pip && \
+RUN set -ex && \    
 	curl -fSsL -O https://bootstrap.pypa.io/get-pip.py && \
     python get-pip.py && \
-	python3 get-pip.py && \
     rm get-pip.py && \
-	pip3 --no-cache-dir install --upgrade pip && \
+	pip --no-cache-dir install --upgrade pip && \
 	python -V && \
-	python3 -V && \
-	pip3 -V && \
 	pip -V && \
 	rm -rf /var/cache/yum
 	
@@ -50,7 +45,7 @@ RUN pip --no-cache-dir install \
     keras_applications>=1.0.8 \
     keras_preprocessing>=1.1.0 \
     mock \
-    numpy future \
+    numpy \
     requests
 
 ENV BAZEL_VERSION 0.24.1
