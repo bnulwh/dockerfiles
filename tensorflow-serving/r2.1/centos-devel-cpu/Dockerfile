@@ -34,7 +34,7 @@ RUN set -ex && \
 	curl -fSsL -O https://bootstrap.pypa.io/get-pip.py && \
     python get-pip.py && \
 	python3 get-pip.py && \
-    rm get-pip.py \
+    rm get-pip.py && \
 	pip3 --no-cache-dir install --upgrade pip && \
 	python -V && \
 	python3 -V && \
