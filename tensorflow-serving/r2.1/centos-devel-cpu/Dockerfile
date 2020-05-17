@@ -34,7 +34,7 @@ RUN set -ex && \
 	tar -C /tmp -zxvf /tmp/gcc-7.5.0.tar.gz && \
 	mkdir -p /tmp/gcc-7.5.0/build && \
 	cd /tmp/gcc-7.5.0/build && \
-	../configure --prefix=/usr/local/gcc --enable-checking=release --enable-languages=c,c++,fortran,go --disable-multilib && \
+	../configure --prefix=/usr/local/gcc --enable-checking=release --enable-languages=c,c++ --disable-multilib && \
 	make -j 4 &&  \
 	make install && \
 	find / -name "libstdc++.so*" && \
