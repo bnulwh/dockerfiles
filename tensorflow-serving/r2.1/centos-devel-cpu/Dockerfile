@@ -43,7 +43,7 @@ RUN set -ex && \
 	ln -s /usr/local/gcc/bin/gcc /usr/bin/gcc && \
 	mv /usr/bin/g++ /usr/bin/g++_old && \
 	ln -s /usr/local/gcc/bin/g++ /usr/bin/g++ && \
-	gcc --verson && \
+	gcc --version && \
 	g++ --version && \
 	rm -fr /tmp/gcc-7.5.0 && \
 	rm -f /tmp/gcc-7.5.0.tar.gz && \
