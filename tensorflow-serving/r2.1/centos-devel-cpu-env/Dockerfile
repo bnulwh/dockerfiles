@@ -80,3 +80,11 @@ RUN mkdir /bazel && \
     cd / && \
     rm -f /bazel/bazel-$BAZEL_VERSION-installer-linux-x86_64.sh
 
+RUN set -ex && \
+    rm -f /lib64/libstdc++.so.6 && \
+    rm -f /usr/lib64/libstdc++.so.6 && \
+    ln -sf /usr/local/gcc/lib64/libstdc++.so.6 /usr/lib64/libstdc++.so.6 && \
+    ln -sf /usr/local/gcc/lib64/libstdc++.so.6 /lib64/libstdc++.so.6 && \
+    strings /lib64/libstdc++.so.6 |grep CXXABI|sort|uniq && \
+    strings /lib64/libstdc++.so.6 |grep '^GLIBCXX'|sort|uniq
+
