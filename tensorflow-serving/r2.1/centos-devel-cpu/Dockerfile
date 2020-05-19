@@ -10,7 +10,7 @@ RUN set -ex && \
 # Download TF Serving sources (optionally at specific commit).
 WORKDIR /tensorflow-serving
 
-FROM centos:7.4.1708 as binary_build
+FROM 5ibnu/tensorflow-serving:r2.1.0-devel-centos7.4-env as binary_build
 
 # Build, and install TensorFlow Serving
 ARG TF_SERVING_BUILD_OPTIONS="--config=nativeopt"
