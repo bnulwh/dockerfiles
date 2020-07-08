@@ -2,7 +2,7 @@ FROM centos:7.4.1708 as base_build
 RUN set -ex && \
            yum makecache && \
            yum groupinstall -y 'Development Tools' -y && \
-           yum install -y gcc gcc-c++ cmake vim which tree &&\
+           yum install -y gcc gcc-c++ cmake vim which tree expat-devel glib2-devel &&\
           curl -o /tmp/bash-5.0.tar.gz -fSL http://ftp.gnu.org/gnu/bash/bash-5.0.tar.gz && \
           cd /tmp && \
           tar zxvf  bash-5.0.tar.gz && \
