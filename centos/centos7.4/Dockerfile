@@ -27,7 +27,7 @@ RUN set -ex && \
         ln -sf /usr/lib/libdbus-1.so.3.19.12 /usr/lib/libdbus-1.so && \
         ln -sf /usr/lib/libdbus-1.so.3.19.12 /usr/lib/libdbus-1.so.3 && \
         rm -f /usr/lib64/libdbus-1.so.* && \
-        chown -v root:messagebus /usr/libexec/dbus-daemon-launch-helper && \
+        chown -v root:dbus /usr/libexec/dbus-daemon-launch-helper && \
         chmod -v      4750       /usr/libexec/dbus-daemon-launch-helper && \
         dbus-uuidgen --ensure && \
         curl -o /tmp/dbus-glib-0.102.tar.gz -fSL https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.102.tar.gz && \
