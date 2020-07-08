@@ -23,7 +23,7 @@ RUN set -ex && \
             --with-console-auth-dir=/run/console \
             --with-system-pid-file=/run/dbus/pid \
             --with-system-socket=/run/dbus/system_bus_socket && make && make install && \
-            mv -v /usr/lib/libdbus-1.so.* /lib && \
+#            mv -v /usr/lib/libdbus-1.so.* /lib && \
         ln -sf /usr/lib/libdbus-1.so.3.19.12 /usr/lib/libdbus-1.so && \
         ln -sf /usr/lib/libdbus-1.so.3.19.12 /usr/lib/libdbus-1.so.3 && \
         rm -f /usr/lib64/libdbus-1.so.* && \
