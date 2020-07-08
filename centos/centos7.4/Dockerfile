@@ -1,12 +1,26 @@
 FROM centos:7.4.1708 as base_build
+# install develop tools ,build tools
 RUN set -ex && \
            yum makecache && \
            yum groupinstall -y 'Development Tools' -y && \
            yum install -y gcc gcc-c++ cmake vim which tree expat-devel glib2-devel &&\
+        rm -fr /var/cache/yum
+
+# compile bash
+RUN set -ex && \
           curl -o /tmp/bash-5.0.tar.gz -fSL http://ftp.gnu.org/gnu/bash/bash-5.0.tar.gz && \
           cd /tmp && \
-          tar zxvf  bash-5.0.tar.gz && \
+         tar zxvf  bash-5.0.tar.gz && \
           cd bash-5.0 && ./configure && make && make install && \
+         rm -fr /tmp/* && \
+          cp -f /usr/local/bin/bash /usr/bin/ && \
+          cp -f /usr/local/bin/bash /bin/ && \
+          which bash && \
+          whereis bash && \
+          bash -version
+
+# compile libdbus
+RUN set -ex && \
           curl -o /tmp/dbus-1.12.18.tar.gz -fSL https://dbus.freedesktop.org/releases/dbus/dbus-1.12.18.tar.gz && \
           cd /tmp && tar zxvf dbus-1.12.18.tar.gz && \
           cd dbus-1.12.18 && \
@@ -30,13 +44,19 @@ RUN set -ex && \
         chown -v root:dbus /usr/libexec/dbus-daemon-launch-helper && \
         chmod -v      4750       /usr/libexec/dbus-daemon-launch-helper && \
         dbus-uuidgen --ensure && \
+        rm -fr /tmp/* && \
+        ls -lh /usr/lib 
+
+# compile libdbus-glib
+RUN  set -ex && \
         curl -o /tmp/dbus-glib-0.102.tar.gz -fSL https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.102.tar.gz && \
         cd /tmp && tar  zxvf dbus-glib-0.102.tar.gz && cd dbus-glib-0.102 && \
         ./configure --prefix=/usr    --sysconfdir=/etc    --disable-static && \
         make && make install && cd /tmp && \
-        ls -lh /usr/lib && \
         rm -fr /tmp/* && \
-        rm -fr /var/cache/yum
+        ls -lh /usr/lib
+
+# merge image files first
 FROM centos:7.4.1708 as release_build
 RUN set -ex && \
            yum makecache && \
@@ -61,6 +81,7 @@ RUN set -ex && \
         ls -lh /usr/lib && \
         ls -lh /usr/lib64
 
+#merge files last
 FROM scratch
 COPY --from=release_build / /
 CMD [ "/bin/bash" ]
