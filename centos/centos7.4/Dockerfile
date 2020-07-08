@@ -41,6 +41,7 @@ RUN set -ex && \
         ln -sf /usr/lib/libdbus-1.so.3.19.12 /usr/lib/libdbus-1.so && \
         ln -sf /usr/lib/libdbus-1.so.3.19.12 /usr/lib/libdbus-1.so.3 && \
         rm -f /usr/lib64/libdbus-1.so.* && \
+        ldconfig && \
         chown -v root:dbus /usr/libexec/dbus-daemon-launch-helper && \
         chmod -v      4750       /usr/libexec/dbus-daemon-launch-helper && \
         dbus-uuidgen --ensure && \
