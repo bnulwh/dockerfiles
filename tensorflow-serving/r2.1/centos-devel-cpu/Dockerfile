@@ -30,7 +30,7 @@ RUN set -ex && \
 	
 RUN set -ex && \
     yum install  gmp  gmp-devel  mpfr  mpfr-devel  libmpc  libmpc-devel -y && \
-    curl -fSsL -o /tmp/gcc-7.5.0.tar.gz https://bigsearcher.com/mirrors/gcc/releases/gcc-7.5.0/gcc-7.5.0.tar.gz && \
+    curl -fSL -o /tmp/gcc-7.5.0.tar.gz http://mirrors.nju.edu.cn/gnu/gcc/gcc-7.5.0/gcc-7.5.0.tar.gz && \
 	tar -C /tmp -zxvf /tmp/gcc-7.5.0.tar.gz && \
 	mkdir -p /tmp/gcc-7.5.0/build && \
 	cd /tmp/gcc-7.5.0/build && \
@@ -47,10 +47,16 @@ RUN set -ex && \
 	g++ --version && \
 	rm -fr /tmp/gcc-7.5.0 && \
 	rm -f /tmp/gcc-7.5.0.tar.gz && \
+    rm -f /lib64/libstdc++.so.6 && \
+    rm -f /usr/lib64/libstdc++.so.6 && \
+    ln -sf /usr/local/gcc/lib64/libstdc++.so.6 /usr/lib64/libstdc++.so.6 && \
+    ln -sf /usr/local/gcc/lib64/libstdc++.so.6 /lib64/libstdc++.so.6 && \
+    strings /lib64/libstdc++.so.6 |grep CXXABI|sort|uniq && \
+    strings /lib64/libstdc++.so.6 |grep '^GLIBCXX'|sort|uniq && \
 	rm -rf /var/cache/yum
 	
 RUN set -ex && \    
-	curl -fSsL -O https://bootstrap.pypa.io/get-pip.py && \
+	curl -fSL -O https://bootstrap.pypa.io/get-pip.py && \
     python get-pip.py && \
     rm get-pip.py && \
 	pip --no-cache-dir install --upgrade pip && \
@@ -59,7 +65,7 @@ RUN set -ex && \
 	rm -rf /var/cache/yum
 	
 
-RUN pip --no-cache-dir install \
+RUN set -ex && pip --no-cache-dir install \
     future>=0.17.1 \
     grpcio \
     h5py \
@@ -71,26 +77,19 @@ RUN pip --no-cache-dir install \
 
 ENV BAZEL_VERSION 0.24.1
 WORKDIR /
-RUN mkdir /bazel && \
+RUN set -ex && mkdir /bazel && \
     cd /bazel && \
-    curl -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36" -fSsL -O https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/bazel-$BAZEL_VERSION-installer-linux-x86_64.sh && \
-    curl -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36" -fSsL -o /bazel/LICENSE.txt https://raw.githubusercontent.com/bazelbuild/bazel/master/LICENSE && \
+    curl -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36" -fSL -O https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/bazel-$BAZEL_VERSION-installer-linux-x86_64.sh && \
+    curl -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36" -fSL -o /bazel/LICENSE.txt https://raw.githubusercontent.com/bazelbuild/bazel/master/LICENSE && \
     chmod +x bazel-*.sh && \
     ./bazel-$BAZEL_VERSION-installer-linux-x86_64.sh && \
     cd / && \
     rm -f /bazel/bazel-$BAZEL_VERSION-installer-linux-x86_64.sh
 
-RUN set -ex && \
-    rm -f /lib64/libstdc++.so.6 && \
-    rm -f /usr/lib64/libstdc++.so.6 && \
-    ln -sf /usr/local/gcc/lib64/libstdc++.so.6 /usr/lib64/libstdc++.so.6 && \
-    ln -sf /usr/local/gcc/lib64/libstdc++.so.6 /lib64/libstdc++.so.6 && \
-    strings /lib64/libstdc++.so.6 |grep CXXABI|sort|uniq && \
-    strings /lib64/libstdc++.so.6 |grep '^GLIBCXX'|sort|uniq
 
 
 RUN set -ex && \
-    curl -o /tmp/serving-2.1.0.tar.gz -fSsL https://codeload.github.com/tensorflow/serving/tar.gz/2.1.0 && \
+    curl -o /tmp/serving-2.1.0.tar.gz -fSL https://codeload.github.com/tensorflow/serving/tar.gz/2.1.0 && \
 	tar -C / -zxvf /tmp/serving-2.1.0.tar.gz && \
 	mv /serving-2.1.0 /tensorflow-serving && \
 	ls -lh /tensorflow-serving && \
@@ -107,7 +106,7 @@ RUN echo "Building with build options: ${TF_SERVING_BUILD_OPTIONS}"
 ARG TF_SERVING_BAZEL_OPTIONS=""
 RUN echo "Building with Bazel options: ${TF_SERVING_BAZEL_OPTIONS}"
 
-RUN bazel build --color=yes --curses=yes \
+RUN set -ex && bazel build --color=yes --curses=yes \
     ${TF_SERVING_BAZEL_OPTIONS} \
     --verbose_failures \
     --output_filter=DONT_MATCH_ANYTHING \
@@ -117,7 +116,7 @@ RUN bazel build --color=yes --curses=yes \
     /usr/local/bin/
 
 # Build and install TensorFlow Serving API
-RUN bazel build --color=yes --curses=yes \
+RUN set -ex && bazel build --color=yes --curses=yes \
     ${TF_SERVING_BAZEL_OPTIONS} \
     --verbose_failures \
     --output_filter=DONT_MATCH_ANYTHING \
@@ -131,6 +130,6 @@ RUN bazel build --color=yes --curses=yes \
 
 FROM binary_build as clean_build
 # Clean up Bazel cache when done.
-RUN bazel clean --expunge --color=yes && \
+RUN set -ex && bazel clean --expunge --color=yes && \
     rm -rf /root/.cache
 CMD ["/bin/bash"]
