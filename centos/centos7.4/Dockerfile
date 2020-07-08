@@ -52,6 +52,7 @@ RUN set -ex && \
 RUN  set -ex && \
         curl -o /tmp/dbus-glib-0.102.tar.gz -fSL https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.102.tar.gz && \
         cd /tmp && tar  zxvf dbus-glib-0.102.tar.gz && cd dbus-glib-0.102 && \
+        export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/pkgconfig && \
         ./configure --prefix=/usr    --sysconfdir=/etc    --disable-static && \
         make && make install && cd /tmp && \
         rm -fr /tmp/* && \
@@ -74,11 +75,12 @@ COPY --from=base_build /usr/lib/libdbus-glib-1.so.2.2.2 /usr/lib/libdbus-glib-1.
 COPY --from=base_build /usr/lib/libdbus-glib-1.la /usr/lib/libdbus-glib-1.la
 COPY --from=base_build /usr/lib/dbus-1.0 /usr/lib/dbus-1.0
 COPY --from=base_build /usr/lib/pkgconfig /usr/lib/pkgconfig
-RUN set -ex && \
-        ln -sf /usr/lib/libdbus-1.so.3.19.12 /usr/lib/libdbus-1.so && \
-        ln -sf /usr/lib/libdbus-1.so.3.19.12 /usr/lib/libdbus-1.so.3 && \
-        ln -sf /usr/lib/libdbus-glib-1.so.2.2.2 /usr/lib/libdbus-glib-1.so.2 && \
-       ln -sf /usr/lib/libdbus-glib-1.so.2.2.2 /usr/lib/libdbus-glib-1.so && \
+RUN set -ex && cd /usr/lib && \
+        ln -sf libdbus-1.so.3.19.12  libdbus-1.so && \
+        ln -sf libdbus-1.so.3.19.12  libdbus-1.so.3 && \
+        ln -sf libdbus-glib-1.so.2.2.2  libdbus-glib-1.so.2 && \
+        ln -sf libdbus-glib-1.so.2.2.2  libdbus-glib-1.so && \
+        ldconfig && \
         ls -lh /usr/lib && \
         ls -lh /usr/lib64
 
