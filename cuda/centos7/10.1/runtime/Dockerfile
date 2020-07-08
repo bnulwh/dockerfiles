@@ -1,5 +1,5 @@
-ARG IMAGE_NAME
-FROM ${IMAGE_NAME}:10.1-base-centos7
+# ARG IMAGE_NAME
+FROM 5ibnu/cuda:10.1-base-centos7.4
 LABEL maintainer "NVIDIA CORPORATION <sw-cuda-installer@nvidia.com>"
 
 RUN yum install -y \
