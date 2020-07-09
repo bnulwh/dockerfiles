@@ -1,46 +1,40 @@
-#!/usr/bin/env bash
-set -Eeo pipefail
-
-# usage: file_env VAR [DEFAULT]
-#    ie: file_env 'XYZ_DB_PASSWORD' 'example'
-# (will allow for "$XYZ_DB_PASSWORD_FILE" to fill in the value of
-#  "$XYZ_DB_PASSWORD" from a file, especially for Docker's secrets feature)
-file_env() {
-	local var="$1"
-	local fileVar="${var}_FILE"
-	local def="${2:-}"
-	if [ "${!var:-}" ] && [ "${!fileVar:-}" ]; then
-		echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
-		exit 1
-	fi
-	local val="$def"
-	if [ "${!var:-}" ]; then
-		val="${!var}"
-	elif [ "${!fileVar:-}" ]; then
-		val="$(< "${!fileVar}")"
-	fi
-	export "$var"="$val"
-	unset "$fileVar"
-}
+#!/bin/sh
+set -e
 
 export KONG_NGINX_DAEMON=off
 
+has_transparent() {
+  echo "$1" | grep -E "[^\s,]+\s+transparent\b" >/dev/null
+}
+
 if [[ "$1" == "kong" ]]; then
   PREFIX=${KONG_PREFIX:=/usr/local/kong}
-  file_env KONG_PG_PASSWORD
-  file_env KONG_PG_USER
-  file_env KONG_PG_DATABASE
 
   if [[ "$2" == "docker-start" ]]; then
+    shift 2
     kong prepare -p "$PREFIX" "$@"
 
     ln -sf /dev/stdout $PREFIX/logs/access.log
     ln -sf /dev/stdout $PREFIX/logs/admin_access.log
     ln -sf /dev/stderr $PREFIX/logs/error.log
 
-    exec /usr/local/openresty/nginx/sbin/nginx \
-      -p "$PREFIX" \
-      -c nginx.conf
+    if [ "$(id -u)" != "0" ]; then
+      exec /usr/local/openresty/nginx/sbin/nginx \
+        -p "$PREFIX" \
+        -c nginx.conf
+    else
+      if [ ! -z ${SET_CAP_NET_RAW} ] \
+          || has_transparent "$KONG_STREAM_LISTEN" \
+          || has_transparent "$KONG_PROXY_LISTEN" \
+          || has_transparent "$KONG_ADMIN_LISTEN";
+      then
+        setcap cap_net_raw=+ep /usr/local/openresty/nginx/sbin/nginx
+      fi
+      chown -R kong:0 /usr/local/kong
+      exec su-exec kong /usr/local/openresty/nginx/sbin/nginx \
+        -p "$PREFIX" \
+        -c nginx.conf
+    fi
   fi
 fi
 
