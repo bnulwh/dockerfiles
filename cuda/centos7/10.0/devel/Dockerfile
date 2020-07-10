@@ -12,7 +12,7 @@ cuda-libraries-dev-$CUDA_PKG_VERSION \
         rpm -e --nodeps kernel-headers  && \
         rpm -import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org && \
         rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm && \
-        yum -y --enablerepo=elrepo-kernel install kernel-ml.x86_64 kernel-ml-devel kernel-ml-headers.x86_64 && \
+        yum -y --enablerepo=elrepo-kernel install kernel-ml-headers.x86_64 && \
         yum clean all && \
         rm -rf /var/cache/yum/* && \
         rpm -qa
