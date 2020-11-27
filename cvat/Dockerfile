@@ -95,7 +95,7 @@ RUN if [ "$AUTO_SEGMENTATION" = "yes" ]; then \
     fi
 
 # Install and initialize CVAT, copy all necessary files
-COPY requirements /tmp/requirements
+COPY cvat/requirements/ /tmp/requirements/
 COPY supervisord.conf mod_wsgi.conf wait-for-it.sh manage.py ${HOME}/
 RUN python3 -m pip install --no-cache-dir -r /tmp/requirements/${DJANGO_CONFIGURATION}.txt
 # pycocotools package is impossible to install with its dependencies by one pip install command
