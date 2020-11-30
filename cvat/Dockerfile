@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 ARG http_proxy
 ARG https_proxy
@@ -119,3 +119,6 @@ RUN if [ "$WITH_DEXTR" = "yes" ]; then \
         7z e ${DEXTR_MODEL_DIR}/dextr.zip -o${DEXTR_MODEL_DIR} && rm ${DEXTR_MODEL_DIR}/dextr.zip; \
     fi
 
+RUN set -ex \
+           && python3 -m pip install --no-cache-dir six  scikit-build cmake \
+           && python3 -m pip install --no-cache-dir opencv-python-headless Cyphon GitPython matplotlib Pillow pycocotools PyYAML scikit-image tensorboardX
