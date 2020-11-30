@@ -120,7 +120,7 @@ RUN if [ "$WITH_DEXTR" = "yes" ]; then \
     fi
 
 RUN set -ex \
-           && python3 -m pip install --no-cache-dir upgrade pip \
+           && python3 -m pip install --no-cache-dir --upgrade pip \
            && apt-get install -y cmake \
           && python3 -m pip install --no-cache-dir six  scikit-build cmake \
            && python3 -m pip install --no-cache-dir opencv-python-headless Cyphon GitPython matplotlib Pillow pycocotools PyYAML scikit-image tensorboardX
