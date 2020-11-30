@@ -19,7 +19,7 @@ ARG USER=django
 ARG DJANGO_CONFIGURATION=production
 ENV DJANGO_CONFIGURATION=${DJANGO_CONFIGURATION}
 
-#COPY pip.conf /root/.pip/
+COPY pip.conf /root/.pip/
 
 # Install necessary apt packages
 RUN set -ex && apt-get update && \
@@ -120,5 +120,7 @@ RUN if [ "$WITH_DEXTR" = "yes" ]; then \
     fi
 
 RUN set -ex \
-           && python3 -m pip install --no-cache-dir six  scikit-build cmake \
+           && python3 -m pip install --no-cache-dir upgrade pip \
+           && apt-get install -y cmake \
+          && python3 -m pip install --no-cache-dir six  scikit-build cmake \
            && python3 -m pip install --no-cache-dir opencv-python-headless Cyphon GitPython matplotlib Pillow pycocotools PyYAML scikit-image tensorboardX
