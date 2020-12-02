@@ -124,5 +124,5 @@ RUN set -ex \
     && apt-get update \
     && apt-get install -y cmake nfs-common \
     && python3 -m pip install --no-cache-dir six  scikit-build cmake \
-    && python3 -m pip install --no-cache-dir opencv-python-headless Cyphon GitPython matplotlib Pillow pycocotools PyYAML scikit-image tensorboardX \
+    && python3 -m pip install --no-cache-dir opencv-python-headless Cython GitPython matplotlib Pillow pycocotools PyYAML scikit-image tensorboardX \
     && rm -rf /var/lib/apt/lists/*
