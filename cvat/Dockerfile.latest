@@ -95,7 +95,7 @@ RUN if [ "$AUTO_SEGMENTATION" = "yes" ]; then \
     fi
 
 # Install and initialize CVAT, copy all necessary files
-COPY requirements/ /tmp/requirements/
+COPY requirements /tmp/requirements
 COPY supervisord.conf mod_wsgi.conf wait-for-it.sh manage.py ${HOME}/
 RUN python3 -m pip install --no-cache-dir -r /tmp/requirements/${DJANGO_CONFIGURATION}.txt
 # pycocotools package is impossible to install with its dependencies by one pip install command
@@ -119,10 +119,3 @@ RUN if [ "$WITH_DEXTR" = "yes" ]; then \
         7z e ${DEXTR_MODEL_DIR}/dextr.zip -o${DEXTR_MODEL_DIR} && rm ${DEXTR_MODEL_DIR}/dextr.zip; \
     fi
 
-RUN set -ex \
-    && python3 -m pip install --no-cache-dir --upgrade pip \
-    && apt-get update \
-    && apt-get install -y cmake nfs-common \
-    && python3 -m pip install --no-cache-dir six  scikit-build cmake \
-    && python3 -m pip install --no-cache-dir opencv-python-headless Cyphon GitPython matplotlib Pillow pycocotools PyYAML scikit-image tensorboardX \
-    && rm -rf /var/lib/apt/lists/*
