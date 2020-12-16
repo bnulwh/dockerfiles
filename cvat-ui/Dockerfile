@@ -15,7 +15,7 @@ ENV TERM=xterm \
     LANG='C.UTF-8'  \
     LC_ALL='C.UTF-8'
 
-RUN npm config set registry https://registry.npm.taobao.org
+# RUN npm config set registry https://registry.npm.taobao.org
 # Install dependencies
 COPY cvat-core/package*.json /tmp/cvat-core/
 COPY cvat-canvas/package*.json /tmp/cvat-canvas/
