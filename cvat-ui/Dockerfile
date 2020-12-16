@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS cvat-ui
+FROM node:lts AS cvat-ui
 
 ARG http_proxy
 ARG https_proxy
