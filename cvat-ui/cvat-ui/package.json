@@ -21,6 +21,7 @@
     "@babel/preset-typescript": "^7.6.0",
     "@typescript-eslint/eslint-plugin": "^2.19.2",
     "@typescript-eslint/parser": "^2.19.2",
+    "@types/sm-crypto": "^0.1.0",
     "babel-loader": "^8.0.6",
     "babel-plugin-import": "^1.12.2",
     "copy-webpack-plugin": "^5.1.1",
