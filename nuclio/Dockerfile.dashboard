@@ -1,0 +1,1 @@
+FROM  quay.io/nuclio/dashboard:1.5.11-amd64
